@@ -154,20 +154,20 @@ export const DerivedDataDialog: FC<DerivedDataDialogProps> = function DerivedDat
     if (bodyOnly) {
         return <Box sx={{marginTop: 2}}>
             <Box sx={{width: '100%', display: 'flex', alignItems: 'center'}}>
-                <Typography fontSize="small" sx={{color: 'gray'}}>Transformation from <Typography component="span" fontSize="inherit" sx={{textDecoration: 'underline'}}>{candidateTables[0].derive?.source}</Typography></Typography>
+                <Typography fontSize="small" sx={{color: 'gray'}}>从 <Typography component="span" fontSize="inherit" sx={{textDecoration: 'underline'}}>{candidateTables[0].derive?.source}</Typography></Typography>
             </Box>
             {body}
             <Box sx={{width: '100%', display: 'flex', alignItems: 'center'}}>
                 <Box sx={{ display: 'flex', margin: 'auto'}}>
                     <ButtonGroup size="small" sx={{margin: 'auto'}}>
-                        {/* <Button sx={{textTransform: 'none'}} onClick={()=>{ handleCloseDialog() }}>Cancel</Button> */}
+                        {/* <Button sx={{textTransform: 'none'}} onClick={()=>{ handleCloseDialog() }}>取消</Button> */}
                         <Button sx={{textTransform: 'none', margin: 'auto',}} variant="text" startIcon={<DeleteIcon/>} color="error"
                                 onClick={() => { handleDeleteChart()} }>
-                            {`Delete all`}
+                            {`删除全部`}
                         </Button>
                         <Button sx={{textTransform: 'none', width: '300px', margin: 'auto',}} variant="text" startIcon={<SaveIcon />}
                                 onClick={() => { handleSelection(selectionIdx)} }>
-                            Save <Typography component="span" fontSize="inherit" sx={{margin: '0px 2px', padding: '0px 2px'}}>{`candidate ${selectionIdx + 1} (${candidateTables[selectionIdx].id})`}</Typography> as the result
+                            保存 <Typography component="span" fontSize="inherit" sx={{margin: '0px 2px', padding: '0px 2px'}}>{`candidate ${selectionIdx + 1} (${candidateTables[selectionIdx].id})`}</Typography> 作为结果
                         </Button>
                     </ButtonGroup>
                 </Box>
@@ -181,13 +181,13 @@ export const DerivedDataDialog: FC<DerivedDataDialogProps> = function DerivedDat
             maxWidth={false}
             open={open}
         >
-            <DialogTitle><Typography>Derived Data Candidates</Typography></DialogTitle>
+            <DialogTitle><Typography>派生数据候选项</Typography></DialogTitle>
             <DialogContent sx={{overflowX: "hidden"}} dividers>
                 {body}
             </DialogContent>
             <DialogActions>
-                <Button onClick={()=>{ handleCloseDialog() }}>Cancel</Button>
-                <Button onClick={() => { handleSelection(selectionIdx)} }>Ok</Button>
+                <Button onClick={()=>{ handleCloseDialog() }}>取消</Button>
+                <Button onClick={() => { handleSelection(selectionIdx)} }>确定</Button>
             </DialogActions>
         </Dialog>
     );

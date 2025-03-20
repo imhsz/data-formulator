@@ -244,8 +244,8 @@ export const DisambiguationDialog: FC<DisambiguationDialogProps> = function Disa
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={() => { handleUpdate(codeList[selectionIdx], description, true)} }>Ok</Button>
+                <Button onClick={onClose}>取消</Button>
+                <Button onClick={() => { handleUpdate(codeList[selectionIdx], description, true)} }>确定</Button>
             </DialogActions>
         </Dialog>
     );
