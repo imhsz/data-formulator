@@ -141,7 +141,7 @@ export const ImportStateButton: React.FC<{}> = ({ }) => {
 export const ExportStateButton: React.FC<{}> = ({ }) => {
     const fullStateJson = useSelector((state: DataFormulatorState) => JSON.stringify(state));
 
-    return <Tooltip title="save session locally">
+    return <Tooltip title="本地保存会话">
         <Button 
             variant="text" 
             sx={{textTransform: 'none'}} 
@@ -508,12 +508,12 @@ export const AppFC: FC<AppFCProps> = function AppFC(appProps) {
                 sx={{ marginRight: "8px", height: 32, padding: "4px 0px", marginTop: "2px", "& .MuiToggleButton-root": { padding: "0px 6px" } }}
             >
                 <ToggleButton value="carousel" aria-label="view list">
-                    <Tooltip title="view list">
+                    <Tooltip title="查看列表">
                         <ViewSidebarIcon fontSize="small" sx={{ transform: "scaleX(-1)" }} />
                     </Tooltip>
                 </ToggleButton>
                 <ToggleButton value="gallery" aria-label="view grid">
-                    <Tooltip title="view grid">
+                    <Tooltip title="查看网格">
                         <GridViewIcon fontSize="small" />
                     </Tooltip>
                 </ToggleButton>

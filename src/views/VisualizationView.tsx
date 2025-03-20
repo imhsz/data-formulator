@@ -409,7 +409,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
 
 
     let deleteButton = (
-        <Tooltip title="delete" key="delete-btn-tooltip">
+        <Tooltip title="删除" key="delete-btn-tooltip">
             <IconButton color="warning" size="small" sx={{ textTransform: "none" }}  disabled={focusedChart.intermediate != undefined}
                         onClick={() => { handleDeleteChart() }}>
                 <DeleteIcon />
@@ -432,7 +432,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
                     onClick={() => { setCodeViewOpen(!codeViewOpen) }}><TerminalIcon />
             </IconButton>
         </Tooltip>,
-        <Tooltip title={`${codeExplViewOpen ? 'hide' : 'view'} transformation explanation`} key="code-expl-view-btn-tooltip">
+        <Tooltip title={`${codeExplViewOpen ? '隐藏' : '查看'}转换说明`} key="code-expl-view-btn-tooltip">
             <IconButton color="primary" size="small" sx={{ textTransform: "none",  
                                                             backgroundColor: !codeExplViewOpen ? "" : "rgba(2, 136, 209, 0.3)", 
                                                             "&:hover": { backgroundColor: !codeExplViewOpen ? "default" : "rgba(2, 136, 209, 0.3)" }}} 
@@ -440,7 +440,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
             </IconButton>
         </Tooltip>,
         <Divider key="dv3" orientation="vertical" variant="middle" flexItem sx={{ marginLeft: "8px", marginRight: "4px" }} />,
-        <Tooltip title="view agent dialog" key="view-chat-history-btn-tooltip">
+        <Tooltip title="查看代理对话" key="view-chat-history-btn-tooltip">
             <IconButton color="primary" size="small" sx={{ textTransform: "none" }} 
                     onClick={() => { setChatDialogOpen(!chatDialogOpen) }}><QuestionAnswerIcon />
             </IconButton>

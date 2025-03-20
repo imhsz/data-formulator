@@ -265,7 +265,7 @@ const UserActionTableSelector: FC<{
                     />
                 );
             })}
-            <Tooltip title="add more base tables for data formulation">
+            <Tooltip title="添加更多基础表格进行数据构建">
                 <IconButton
                     size="small"
                     onClick={handleClick}
@@ -743,7 +743,7 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
                         labelId="chart-mark-select-label"
                         id="chart-mark-select"
                         value={chart.chartType}
-                        title="Chart Type"
+                        title="图表类型"
                         renderValue={(value: string) => {
                             const t = getChartTemplate(value);
                             return (

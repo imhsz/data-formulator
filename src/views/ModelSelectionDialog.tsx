@@ -322,7 +322,7 @@ export const ModelSelectionButton: React.FC<{}> = ({ }) => {
             />
         </TableCell>
         <TableCell align="right">
-            <Tooltip title={modelExists ? "provider + model already exists" : "add and test model"}>
+            <Tooltip title={modelExists ? "提供商+模型已存在" : "添加并测试模型"}>
                 <IconButton color={modelExists ? 'error' : 'primary'}
                     disabled={!readyToTest}
                     sx={{cursor: modelExists ? 'help' : 'pointer'}}

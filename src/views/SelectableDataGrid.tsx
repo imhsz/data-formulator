@@ -228,7 +228,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
                     sx={{paddingLeft: 1, paddingRight: 0}}
                     size="small"
                     value={searchText}
-                    placeholder="Search in table"
+                    placeholder="搜索表格内容"
                     startAdornment={
                         searchText.length > 0 ?
                             (
@@ -266,7 +266,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
                     }}
                 />
                 {searchText.length > 0 ? <Typography component="span" className="table-footer-number" sx={{ margin: "auto 8px" }}>
-                    {`${rowsToDisplay.length} matches`}   
+                    {`${rowsToDisplay.length} 个匹配项`}   
                 </Typography>: ''}
             </Box>
             {/* <Tooltip key="delete-action" title={`Delete ${tableName}\n(note: all charts and concepts based on this table will be deleted)`}>
@@ -277,7 +277,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
                 </IconButton>
             </Tooltip> */}
             
-            <Tooltip title="Infer Data Type">
+            <Tooltip title="推断数据类型">
             <IconButton size="small" color="primary"
                 onClick={() => {
                         console.log(`[fyi] just sent request to process load data`);
@@ -397,7 +397,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
                                                     }}
                                                 >
                                                     <Box component="span" className="data-view-header-title">
-                                                        <Tooltip title={`${columnDef.dataType} type`} >
+                                                        <Tooltip title={`${columnDef.dataType} 类型`} >
                                                             <span role="img" style={{ fontSize: "inherit", padding: "2px", display: "inline-flex", alignItems: "center" }}>
                                                                 {getIconFromType(columnDef.dataType)}
                                                             </span>
@@ -438,7 +438,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
             <Paper className="table-footer-container"
                 sx={{ borderTop: '1px solid', borderColor: 'rgba(0, 0, 0, 0.12)', padding: '6px', 
                       display: 'flex', flexDirection: 'row',  position: 'absolute', bottom: 0, right: 15 }}>
-                <Tooltip title="Table options">
+                <Tooltip title="表格选项">
                     <ToggleButton
                         color="primary"
                         size="small"
@@ -491,7 +491,7 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
                         </IconButton>
                     </Tooltip>
                     <Typography  className="table-footer-number">
-                        {`${rows.length} rows`}
+                        {`${rows.length} 行数据`}
                     </Typography>
                 </Box>
             </Paper>

@@ -618,13 +618,13 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
                 dispatch(dfActions.addMessages({
                     "timestamp": Date.now(),
                     "type": "success",
-                    "value": `Find ${candidates.length} candidate transformations for concept "${name}".`
+                    "value": `为概念"${name}"找到了${candidates.length}个候选转换函数。`
                 }));
             } else {
                 dispatch(dfActions.addMessages({
                     "timestamp": Date.now(),
                     "type": "info",
-                    "value": `Find ${candidates.length} candidate transformations for concept "${name}", please try again.`
+                    "value": `未找到概念"${name}"的候选转换函数，请重试。`
                 }));
             }
             return candidates;
@@ -634,7 +634,7 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
             dispatch(dfActions.addMessages({
                 "timestamp": Date.now(),
                 "type": "error",
-                "value": "unable to generate the desired transformation, please try again."
+                "value": "无法生成所需的转换函数，请重试。"
             }));
             return [];
         }

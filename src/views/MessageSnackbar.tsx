@@ -68,7 +68,7 @@ export function MessageSnackbar() {
 
     return (
         <Box>
-            <Tooltip placement="right" title="view challenges">
+            <Tooltip placement="right" title="查看挑战">
                 <IconButton 
                     color="warning"
                     disabled={challenges.length === 0}
@@ -91,7 +91,7 @@ export function MessageSnackbar() {
                     <AssignmentIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip placement="right" title="view last message">
+            <Tooltip placement="right" title="查看最新消息">
                 <IconButton disabled={messages.length == 0} sx={{position: "absolute", bottom: 16, right: 8}}
                     onClick={()=>{
                         setOpen(true);
