@@ -19,12 +19,12 @@ export const About: FC<{}> = function About({ }) {
             </Box>
             <Box>
                 <Button href="/" variant="outlined" sx={{margin: "20px 0"}}>
-                    Use {toolName}
+                    使用 {toolName}
                 </Button>
             </Box>
             <Box sx={{textAlign: "initial", maxWidth: '80%',  margin: "auto", fontFamily: 'Arial,Roboto,Helvetica Neue,sans-serif'}}>
-                <Typography>{toolName} lets you create and iterate between rich visualizations using combined user interface and natural language descriptions.</Typography>
-                <Typography>The AI agent in {toolName} helps you explore visualizations <em>beyond your initial dataset</em>.</Typography>
+                <Typography>{toolName} 让您使用组合用户界面和自然语言描述创建并在丰富的可视化之间迭代。</Typography>
+                <Typography>{toolName} 中的AI助手帮助您探索<em>超越初始数据集</em>的可视化效果。</Typography>
             </Box>
             <Box component="img" sx={{paddingTop: "20px",  height: 480, margin: "auto" }} alt="" src={"/data-formulator-screenshot.png"} />
         </Box>)

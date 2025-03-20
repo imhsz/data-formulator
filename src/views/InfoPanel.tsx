@@ -66,7 +66,7 @@ export const InfoPanelFC: FC<{ $tableRef: React.RefObject<AgGridReact | Selectab
     let dataSelectionView = "";
 
     let tabEntries = [
-        { label: "Selected Data", panelElement: dataSelectionView, highlight: false },
+        { label: "已选数据", panelElement: dataSelectionView, highlight: false },
     ];
 
     function a11yProps(index: number) {

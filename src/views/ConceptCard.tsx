@@ -1,4 +1,3 @@
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -182,7 +181,7 @@ export const ConceptCard: FC<ConceptCardProps> = function ConceptCard({ field })
 
     let typeIconMenu = (
         <div>
-            <Tooltip title={`${field.type} type`} >
+            <Tooltip title={`${field.type} 类型`} >
                 <IconButton size="small" sx={{ fontSize: "inherit", padding: "2px" }}
                     color="primary" aria-label={field.type} component="span"
                     onClick={handleDTypeClick}
@@ -217,7 +216,7 @@ export const ConceptCard: FC<ConceptCardProps> = function ConceptCard({ field })
         fontSize: "inherit", marginLeft: "3px", whiteSpace: "nowrap",
         overflow: "hidden", textOverflow: "ellipsis", flexShrink: 1
     }}>{field.name}</Typography>
-        : <Typography sx={{ fontSize: 12, marginLeft: "3px", color: "gray", fontStyle: "italic" }}>new concept</Typography>;
+        : <Typography sx={{ fontSize: 12, marginLeft: "3px", color: "gray", fontStyle: "italic" }}>新概念</Typography>;
 
     let backgroundColor = theme.palette.primary.main;
     if (field.source == "original") {
@@ -304,7 +303,7 @@ export const CodeEditor: FC<{ code: string; handleSaveCode: (code: string) => vo
                     "&:hover": { backgroundColor: "rgba(2, 136, 209, 0.3)" }
                 }}
                 size="small" onClick={() => { setLocalCode(code); }}>
-                undo
+                撤销
             </Button>
             <Button
                 variant={localCode != code ? "contained" : "text"}
@@ -312,12 +311,134 @@ export const CodeEditor: FC<{ code: string; handleSaveCode: (code: string) => vo
                     "&:hover": { backgroundColor: "rgba(2, 136, 209, 0.3)" }
                 }}
                 size="small" onClick={() => { handleSaveCode(localCode); }}>
-                save code edits
+                保存代码编辑
             </Button>
         </ButtonGroup>
     </Box>
 }
 
+export const CustomConceptForm: FC<ConceptFormProps> = function CustomConceptForm({ concept, handleUpdateConcept, handleDeleteConcept, turnOffEditMode }) {
+
+    const conceptShelfItems = useSelector((state: DataFormulatorState) => state.conceptShelfItems);
+
+    const [name, setName] = useState(concept.name);
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { setName(event.target.value); };
+
+    const [dtype, setDtype] = useState(concept.name == "" ? "auto" : concept.type as string);
+    const handleDtypeChange = (event: SelectChangeEvent) => { setDtype(event.target.value); };
+
+    // if these two fields are changed from other places, update their values
+    useEffect(() => { setDtype(concept.type) }, [concept.type]);
+
+    let typeList = TypeList
+    let nameField = (
+        <TextField key="name-field" id="name" label="概念名称" value={name} sx={{ minWidth: 120, maxWidth: 160, flex: 1 }}
+            FormHelperTextProps={{
+                style: { fontSize: 8, marginTop: 0, marginLeft: "auto" }
+            }}
+            multiline
+            helperText={conceptShelfItems.some(f => f.name == name && f.id != concept.id) ? "此名称已存在" : ""}
+            size="small" onChange={handleNameChange} required error={name == "" || conceptShelfItems.some(f => f.name == name && f.id != concept.id)}
+        />)
+
+    let typeField = (
+        <FormControl key="type-select" sx={{ width: 100, marginLeft: "4px" }} size="small">
+            <InputLabel id="dtype-select-label">数据类型</InputLabel>
+            <Select
+                labelId="dtype-select-label"
+                id="dtype-select"
+                value={dtype}
+                label="数据类型"
+                onChange={handleDtypeChange}>
+                {typeList.map((t, i) => (
+                    <MenuItem value={t} key={`${concept.id}-${i}`}>
+                        <Typography component="span" sx={{ fontSize: "inherit", marginLeft: "0px" }}>{t}</Typography>
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    )
+
+    let cardTopComponents = undefined;
+
+    let childrenConceptIDs = [concept.id];
+    while (true) {
+        let newChildrens = conceptShelfItems.filter(f => f.source == "derived"
+                && !childrenConceptIDs.includes(f.id)
+                && f.transform?.parentIDs.some(pid => childrenConceptIDs.includes(pid)))
+            .map(f => f.id);
+        if (newChildrens.length == 0) {
+            break
+        }
+        childrenConceptIDs = [...childrenConceptIDs, ...newChildrens];
+    }
+
+    cardTopComponents = [
+        nameField,
+        typeField,
+    ]
+
+    const checkCustomConceptDiff = () => {
+        let nameTypeNeq = (concept.name != name || concept.type != dtype);
+        return (nameTypeNeq );
+    }
+
+    let saveDisabledMsg = [];
+    if (name == "" || conceptShelfItems.some(f => f.name == name && f.id != concept.id)) {
+        saveDisabledMsg.push("概念名称为空")
+    }
+
+    return (
+        <Box sx={{ display: "flex", flexDirection: "column" }} >
+            <Box component="form" className="concept-form"
+                sx={{ display: "flex", flexWrap: "wrap", '& > :not(style)': { margin: "4px", /*width: '25ch'*/ }, }}
+                noValidate
+                autoComplete="off">
+                <Box sx={{ overflowX: "clip", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "baseline" }}>
+                    {cardTopComponents}
+                </Box>
+                <ButtonGroup size="small" sx={{ "& button": { textTransform: "none", padding: "2px 4px", marginLeft: "4px" }, flexGrow: 1, justifyContent: "right" }}>
+                    <Tooltip title="删除">
+                        <IconButton size="small"
+                            color="primary" aria-label="Delete" component="span"
+                            disabled={conceptShelfItems.filter(f => f.source == "derived" && f.transform?.parentIDs.includes(concept.id)).length > 0}
+                            onClick={() => { handleDeleteConcept(concept.id); }}>
+                            <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                    </Tooltip>
+                    <Button size="small" variant="outlined" onClick={() => {
+                        setName(concept.name);
+                        setDtype(concept.type);
+
+                        if (checkConceptIsEmpty(concept)) {
+                            handleDeleteConcept(concept.id);
+                        }
+                        if (turnOffEditMode) {
+                            turnOffEditMode();
+                        }
+                    }}>
+                        取消
+                    </Button>
+                    <Button size="small" variant={checkCustomConceptDiff() ? "contained" : "outlined"} disabled={saveDisabledMsg.length > 0 || checkCustomConceptDiff() == false} onClick={() => {
+                        
+                        let tmpConcept = duplicateField(concept);
+                        tmpConcept.name = name;
+                        tmpConcept.type = dtype as Type;
+                        
+                        if (turnOffEditMode) {
+                            turnOffEditMode();
+                        }
+                        handleUpdateConcept(tmpConcept);
+
+                        //setName(""); setDtype("string" as Type); setExamples([]);
+                    }}>
+                        保存
+                    </Button>
+                </ButtonGroup>
+            </Box>
+        </Box>
+    );
+}
 
 export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptForm({ concept, handleUpdateConcept, handleDeleteConcept, turnOffEditMode }) {
 
@@ -375,12 +496,12 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
     const [codeGenInProgress, setCodeGenInProgress] = useState<boolean>(false);
 
     let nameField = (
-        <TextField key="name-field" id="name" fullWidth label="concept name" value={name} sx={{ minWidth: 120, flex: 1, paddingBottom: 1 }}
+        <TextField key="name-field" id="name" fullWidth label="概念名称" value={name} sx={{ minWidth: 120, flex: 1, paddingBottom: 1 }}
             FormHelperTextProps={{
                 style: { fontSize: 8, marginTop: 0, marginLeft: "auto" }
             }}
             multiline
-            helperText={conceptShelfItems.some(f => f.name == name && f.id != concept.id) ? "this name already exists" : ""}
+            helperText={conceptShelfItems.some(f => f.name == name && f.id != concept.id) ? "此名称已存在" : ""}
             size="small" onChange={handleNameChange} required error={name == "" || conceptShelfItems.some(f => f.name == name && f.id != concept.id)}
         />)
 
@@ -407,13 +528,13 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
     cardTopComponents = [
         nameField,
         <FormControl fullWidth key="derived-card-control" sx={{ minWidth: 120 }} size="small">
-            <InputLabel shrink>derive from fields:</InputLabel>
+            <InputLabel shrink>从以下字段派生：</InputLabel>
             <Select
                 labelId="parent-id-select-label"
                 id="parent-id-select"
                 multiple
                 value={transformParentIDs}
-                label="derive from fields:"
+                label="从以下字段派生："
                 inputProps={{}}
                 sx={{"& .MuiSelect-select": {paddingLeft: 1}}}
                 renderValue={(selected) =>
@@ -560,7 +681,7 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
         <IconButton key="tune-icon" size="small" color="primary"
             disabled={codeCandidates.length == 0 || codeGenInProgress}
             onClick={() => { setDialogOpen(true) }}>
-            <Tooltip title={`inspect transformation code`}>
+            <Tooltip title={`检查转换代码`}>
                 <ZoomInIcon />
             </Tooltip>
         </IconButton>,
@@ -584,14 +705,14 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
 
     let saveDisabledMsg = [];
     if (name == "" || conceptShelfItems.some(f => f.name == name && f.id != concept.id)) {
-        saveDisabledMsg.push("concept name is empty")
+        saveDisabledMsg.push("概念名称为空")
     }
     if (concept.source == "derived") {
         if (transformCode == "") {
-            saveDisabledMsg.push("transformation is not specified")
+            saveDisabledMsg.push("未指定转换")
         }
         if (transformResult.filter(entry => entry[1] == undefined).length > 0) {
-            //saveDisabledMsg.push("transformation unsuccessful on some inputs");
+            //saveDisabledMsg.push("某些输入的转换不成功");
         }
     }
 
@@ -604,14 +725,14 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
                 {cardTopComponents}
                 {cardBottomComponents}
                 <ButtonGroup size="small" sx={{ "& button": { textTransform: "none", padding: "2px 4px", marginLeft: "4px" }, flexGrow: 1, justifyContent: "right" }}>
-                    <IconButton size="small"
-                        color="primary" aria-label="Delete" component="span"
-                        disabled={conceptShelfItems.filter(f => f.source == "derived" && f.transform?.parentIDs.includes(concept.id)).length > 0}
-                        onClick={() => { handleDeleteConcept(concept.id); }}>
-                        <Tooltip title="delete">
+                    <Tooltip title="删除">
+                        <IconButton size="small"
+                            color="primary" aria-label="Delete" component="span"
+                            disabled={conceptShelfItems.filter(f => f.source == "derived" && f.transform?.parentIDs.includes(concept.id)).length > 0}
+                            onClick={() => { handleDeleteConcept(concept.id); }}>
                             <DeleteIcon fontSize="inherit" />
-                        </Tooltip>
-                    </IconButton>
+                        </IconButton>
+                    </Tooltip>
                     <Button size="small" variant="outlined" onClick={() => {
                         setName(concept.name);
                         setDtype(concept.type);
@@ -623,7 +744,7 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
                             turnOffEditMode();
                         }
                     }}>
-                        Cancel
+                        取消
                     </Button>
                     <Button size="small" variant={checkDerivedConceptDiff() ? "contained" : "outlined"} 
                             disabled={saveDisabledMsg.length > 0 || checkDerivedConceptDiff() == false} onClick={() => {
@@ -643,7 +764,7 @@ export const DerivedConceptForm: FC<ConceptFormProps> = function DerivedConceptF
 
                         //setName(""); setDtype("string" as Type); setExamples([]);
                     }}>
-                        Save
+                        保存
                     </Button>
                 </ButtonGroup>
             </Box>
@@ -670,9 +791,9 @@ export const CodexDialogBox: FC<CodexDialogBoxProps> = function ({
     let [description, setDescription] = useState(initialDescription);
     let [requestTimeStamp, setRequestTimeStamp] = useState<number>(0);
 
-    let defaultInstruction = `Derive ${outputName} from ${inputFieldsInfo.map(f => f.name).join(", ")}`;
+    let defaultInstruction = `从${inputFieldsInfo.map(f => f.name).join("、")}推导出${outputName}`;
 
-    let formulateButton = <Tooltip title="Derived the new concept">
+    let formulateButton = <Tooltip title="推导新概念">
         <IconButton size={size}
             disabled={description == ""}
             sx={{ borderRadius: "10%", alignItems: "flex-end", position: 'relative' }}
@@ -748,7 +869,7 @@ export const CodexDialogBox: FC<CodexDialogBoxProps> = function ({
             }}
             value={description}
             placeholder={defaultInstruction} onChange={(event: any) => { setDescription(event.target.value) }}
-            variant="standard"  label={"transformation prompt"} 
+            variant="standard"  label={"转换提示"} 
         />
     </Box>
 

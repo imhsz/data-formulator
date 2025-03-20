@@ -123,7 +123,7 @@ export const TableSelectionView: React.FC<TableSelectionViewProps> = function Ta
             }})
             
             let challengeView = <Box sx={{margin: "6px 0px"}}>
-                <Typography variant="subtitle2" sx={{marginLeft: "6px", fontSize: 12}}>Try these data visualization challenges with this dataset:</Typography>
+                <Typography variant="subtitle2" sx={{marginLeft: "6px", fontSize: 12}}>尝试使用此数据集解决以下数据可视化挑战：</Typography>
                 {tc.challenges.map((c, j) => <Box key={j} sx={{display: 'flex', alignItems: 'flex-start', pl: 1}}>
                     <Typography sx={{fontSize: 11, color: c.difficulty === 'easy' ? 'success.main' : 
                                                         c.difficulty === 'medium' ? 'warning.main' : 
@@ -156,7 +156,7 @@ export const TableSelectionView: React.FC<TableSelectionViewProps> = function Ta
                                         onClick={(event: React.MouseEvent<HTMLElement>) => {
                                             handleSelectTable(tc);
                                         }}>
-                                    load table
+                                    加载表格
                                 </Button>
                             </Box>
                         </Box>
@@ -197,7 +197,7 @@ export const TableSelectionDialog: React.FC<{ buttonElement: any }> = function T
                 open={tableDialogOpen}
                 sx={{ '& .MuiDialog-paper': { maxWidth: '100%', maxHeight: 840, minWidth: 800 } }}
             >
-                <DialogTitle sx={{display: "flex"}}>Explore Sample Datasets
+                <DialogTitle sx={{display: "flex"}}>浏览示例数据集
                     <IconButton
                         sx={{marginLeft: "auto"}}
                         edge="start"
@@ -239,7 +239,7 @@ export const TableSelectionDialog: React.FC<{ buttonElement: any }> = function T
                                 dispatch(dfActions.addMessages({
                                     "timestamp": Date.now(),
                                     "type": "error",
-                                    "value": `Unable to load the sample dataset ${tableChallenges.table.id}, please try again later or upload your data.`
+                                    "value": `无法加载示例数据集 ${tableChallenges.table.id}，请稍后重试或上传您自己的数据。`
                                 }));
                             })
                         }}/>
@@ -406,7 +406,7 @@ export const TableURLDialog: React.FC<TableURLDialogProps> = ({ buttonElement, d
     let dialog = <Dialog key="table-url-dialog" onClose={()=>{setDialogOpen(false)}} open={dialogOpen}
             sx={{ '& .MuiDialog-paper': { maxWidth: '80%', maxHeight: 800, minWidth: 800 } }} disableRestoreFocus
         >
-            <DialogTitle  sx={{display: "flex"}}>Upload data URL
+            <DialogTitle  sx={{display: "flex"}}>上传数据URL
                 <IconButton
                     sx={{marginLeft: "auto"}}
                     edge="start"
@@ -419,15 +419,15 @@ export const TableURLDialog: React.FC<TableURLDialogProps> = ({ buttonElement, d
                 </IconButton>
             </DialogTitle>
             <DialogContent sx={{overflowX: "hidden", padding: 2, display: "flex", flexDirection: "column"}} dividers>
-                <TextField error={tableURL != "" && !hasValidSuffix} autoFocus placeholder='Please enter URL of the dataset' 
-                            helperText={hasValidSuffix ? "" : "the url should links to a csv, tsv or json file"}
+                <TextField error={tableURL != "" && !hasValidSuffix} autoFocus placeholder='请输入数据集的URL' 
+                            helperText={hasValidSuffix ? "" : "URL应链接到csv、tsv或json文件"}
                             sx={{marginBottom: 1}} size="small" value={tableURL} onChange={(event) => { setTableURL(event.target.value.trim()); }} 
-                            id="dataset-url" label="data url" variant="outlined" />
+                            id="dataset-url" label="数据URL" variant="outlined" />
             </ DialogContent>
             <DialogActions>
-                <Button variant="contained" size="small" onClick={()=>{ setDialogOpen(false); }}>cancel</Button>
+                <Button variant="contained" size="small" onClick={()=>{ setDialogOpen(false); }}>取消</Button>
                 <Button variant="contained" size="small" onClick={()=>{ setDialogOpen(false); handleSubmitContent(); }} >
-                    upload
+                    上传
                 </Button>
             </DialogActions>
         </Dialog>;
@@ -555,7 +555,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                     dispatch(dfActions.addMessages({
                         "timestamp": Date.now(),
                         "type": "error",
-                        "value": "unable to perform auto-sort."
+                        "value": "无法执行自动排序。"
                     }));
                     setCleanTableContent(undefined);
                 }
@@ -566,7 +566,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                 dispatch(dfActions.addMessages({
                     "timestamp": Date.now(),
                     "type": "error",
-                    "value": "unable to perform clean data due to server issue."
+                    "value": "由于服务器问题，无法执行数据清理。"
                 }));
             });
     }
@@ -611,7 +611,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
     let dialog = <Dialog key="table-selection-dialog" onClose={()=>{setDialogOpen(false)}} open={dialogOpen}
             sx={{ '& .MuiDialog-paper': { maxWidth: '80%', maxHeight: 800, minWidth: 800 } }}
         >
-            <DialogTitle  sx={{display: "flex"}}>Paste & Upload Data
+            <DialogTitle  sx={{display: "flex"}}>粘贴并上传数据
                 <IconButton
                     sx={{marginLeft: "auto"}}
                     edge="start"
@@ -629,10 +629,10 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                 <Box sx={{width: '100%', marginBottom: 1, display:'flex'}}>
                     <TextField sx={{flex: 1}} disabled={loadFromURL} size="small" 
                             value={tableName} onChange={(event) => { setTableName(event.target.value); }} 
-                           autoComplete='off' id="outlined-basic" label="dataset name" variant="outlined" />
+                           autoComplete='off' id="outlined-basic" label="数据集名称" variant="outlined" />
                     <Divider sx={{margin: 1}} flexItem orientation='vertical'/>
                     <Button sx={{marginLeft: 0, textTransform: 'none'}} onClick={() => {setLoadFromURL(!loadFromURL)}} 
-                            endIcon={!loadFromURL ? <ChevronLeftIcon/> : <ChevronRightIcon />} >{"load from URL"}</Button>
+                            endIcon={!loadFromURL ? <ChevronLeftIcon/> : <ChevronRightIcon />} >{"从URL加载"}</Button>
                     <Collapse orientation='horizontal' in={loadFromURL}>
                         <Box component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }} >
                             <TextField sx={{width: 420}} size="small" value={url} 
@@ -643,7 +643,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                                         event.preventDefault();
                                      }
                                 }}
-                                autoComplete='off' id="outlined-basic" label="url" variant="outlined" />
+                                autoComplete='off' id="outlined-basic" label="网址" variant="outlined" />
                             <Button variant="contained" disabled={url == ""}  sx={{ p: '6px 0px', minWidth: '36px', marginLeft: 1, borderRadius: '32px' }}onClick={handleLoadURL} >
                                 <KeyboardReturnIcon />
                             </Button>
@@ -671,7 +671,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                                 setTableContent(event.target.value); 
                             }}
                             InputLabelProps={{ shrink: true }}
-                            placeholder="Paste data (in csv, tsv, or json format), or a text snippet / an image that contains data to get started."
+                            placeholder="粘贴数据（CSV、TSV或JSON格式），或包含数据的文本片段/图像以开始。"
                             onPasteCapture={(e) => {
                                 console.log(e.clipboardData.files);
                                 if (e.clipboardData.files.length > 0) {
@@ -691,7 +691,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                                 }
                             }}
                             autoComplete='off'
-                            label="data content" variant="outlined" multiline minRows={15} 
+                            label="数据内容" variant="outlined" multiline minRows={15} 
                         />
                         :
                         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -713,14 +713,14 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                                 </IconButton>
                                 {validator.isURL(tableContent) || validator.isDataURI(tableContent) ? (
                                     <img style={{border: '1px lightgray solid', borderRadius: 4, maxWidth: 640, maxHeight: 360}} 
-                                        src={DOMPurify.sanitize(tableContent)} alt="the image is corrupted, please try again." />
+                                        src={DOMPurify.sanitize(tableContent)} alt="图像已损坏，请重试。" />
                                 ) : (
-                                    <Typography color="error">Invalid image data</Typography>
+                                    <Typography color="error">无效的图像数据</Typography>
                                 )}
                             </Box>
                             <TextField fullWidth size="small" sx={{ marginTop: 1, "& .MuiInputBase-input" : {fontSize: 14, lineHeight: 1.2 }}} 
                                 value={imageCleaningInstr} onChange={(event) => { setImageCleaningInstr(event.target.value); }} 
-                                variant="standard" placeholder='additional cleaning instructions' />
+                                variant="standard" placeholder='额外的清理说明' />
                         </Box>)
                     }
                     </Box>
@@ -729,7 +729,7 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                 { cleanTableContent != undefined ? 
                     <Box sx={{display: 'flex', marginRight: 'auto'}}>
                         <Button sx={{}} variant="contained" color="warning" size="small" onClick={()=>{ setCleanTableContent(undefined); }} >
-                            Revert
+                            还原
                         </Button>
                         <Button sx={{marginLeft: 1}} variant="contained" size="small" 
                                 onClick={()=>{ 
@@ -737,23 +737,23 @@ export const TableCopyDialogV2: React.FC<TableCopyDialogProps> = ({ buttonElemen
                                     setTableContentType("text");
                                     setCleanTableContent(undefined); 
                                 }} >
-                            Edit Data
+                            编辑数据
                         </Button>
                     </Box> : <Button disabled={tableContent.trim() == "" || loadFromURL} 
                     variant={cleaningInProgress ? "outlined" : "contained"} color="primary" size="small" sx={{marginRight: 'auto', textTransform: 'none'}} 
                         onClick={handleCleanData} endIcon={cleaningInProgress ? <CircularProgress size={24} /> : <AutoFixNormalIcon/> }>
-                    {tableContentType == "text" ? "Clean / Generate Data" : "Extract Data from Image"} {cleanTableContent ? "(again)" : ""}
+                    {tableContentType == "text" ? "清理/生成数据" : "从图像提取数据"} {cleanTableContent ? "(再次)" : ""}
                 </Button>}
                 {/* <Collapse orientation='horizontal' in={cleanTableContent != undefined}>
                     <Divider sx={{marginLeft: 1}} flexItem orientation='vertical'/>
                 </Collapse> */}
-                <Button disabled={cleanTableContent != undefined} variant="contained" size="small" onClick={()=>{ setDialogOpen(false); }}>cancel</Button>
+                <Button disabled={cleanTableContent != undefined} variant="contained" size="small" onClick={()=>{ setDialogOpen(false); }}>取消</Button>
                 <Button disabled={cleanTableContent?.content == undefined && (tableContentType != "text" || tableContent.trim() == "")} variant="contained" size="small" 
                     onClick={()=>{ 
                         setDialogOpen(false); 
                         handleSubmitContent(cleanTableContent?.content || tableContent); 
                     }} >
-                    {"upload"}
+                    {"上传"}
                 </Button>
             </DialogActions>
             

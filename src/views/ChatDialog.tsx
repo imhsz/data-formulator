@@ -45,7 +45,7 @@ export const ChatDialog: FC<ChatDialogProps> = function ChatDialog({code, dialog
         body = <Box sx={{display: "flex", overflowX: "auto", flexDirection: "column", 
                          justifyContent: "space-between", position: "relative", marginTop: "10px", minHeight: "50px"}}>
             <Typography sx={{ fontSize: 14 }}  color="text.secondary" gutterBottom>
-                {"There is no conversation history yet"}
+                {"暂无对话历史"}
             </Typography>
         </Box>
     } else {
@@ -103,15 +103,15 @@ export const ChatDialog: FC<ChatDialogProps> = function ChatDialog({code, dialog
             open={open}
             key="chat-dialog-dialog"
         >
-            <DialogTitle><Typography>Data Formulation Chat Log</Typography></DialogTitle>
+            <DialogTitle><Typography>数据公式化聊天记录</Typography></DialogTitle>
             <DialogContent sx={{overflowX: "auto"}} dividers>
-                <Divider ><Typography fontSize='small' sx={{color: 'gray'}}>Transformation Code</Typography></Divider>
+                <Divider ><Typography fontSize='small' sx={{color: 'gray'}}>转换代码</Typography></Divider>
                 <Box sx={{maxWidth: 800}}><CodeBox code={code.trimStart()} language="python" /></Box>
-                <Divider sx={{marginTop: 2}}><Typography fontSize='small' sx={{color: 'gray'}}>Derivation Dialog</Typography></Divider>
+                <Divider sx={{marginTop: 2}}><Typography fontSize='small' sx={{color: 'gray'}}>推导对话</Typography></Divider>
                 {body}
             </DialogContent>
             <DialogActions>
-                <Button onClick={()=>{ handleCloseDialog() }}>Close</Button>
+                <Button onClick={()=>{ handleCloseDialog() }}>关闭</Button>
             </DialogActions>
         </Dialog>
     );

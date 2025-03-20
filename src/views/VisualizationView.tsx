@@ -367,12 +367,12 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
                     //dispatch(dfActions.saveChart({chartId: chart.id, tableRef: undefined}));
                     dispatch(dfActions.saveUnsaveChart(focusedChart.id));
                 }}>
-                <Tooltip title="unsave">
+                <Tooltip title="取消保存" key="unsave-tooltip">
                     <StarIcon sx={{ fontSize: "3rem", color: "gold" }} />
                 </Tooltip>
             </IconButton>
         ) : (
-            <Tooltip title="save a copy">
+            <Tooltip title="保存为副本" key="save-as-copy-tooltip">
             <IconButton color="primary" key="unsave-btn" size="small" sx={{ textTransform: "none" }}
                 disabled={chartUnavailable}
                 onClick={() => {
@@ -387,7 +387,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
             </Tooltip>
         );
 
-    let duplicateButton = <Tooltip title="duplicate the chart">
+    let duplicateButton = <Tooltip title="duplicate the chart" key="duplicate-btn-tooltip">
         <IconButton color="primary" key="duplicate-btn" size="small" sx={{ textTransform: "none" }}
         disabled={focusedChart.intermediate != undefined}
         onClick={() => {
@@ -403,7 +403,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
     </Tooltip>
 
     let createNewChartButton =  <BaseChartCreationMenu tableId={focusedChart.tableRef} buttonElement={
-            <Tooltip title="create a new chart">
+            <Tooltip title="create a new chart" key="create-new-chart-btn-tooltip">
                 <AddchartIcon sx={{ fontSize: "3rem" }} />
             </Tooltip>} />
 
@@ -424,7 +424,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
 
     //console.log(focusedChart)
 
-    let derivedTableItems =  (resultTable?.derive || table.derive) ? [
+    let derivedTableItems = table.derive ? [
         <Tooltip title={`${codeViewOpen ? 'hide' : 'view'} transformation code`} key="code-view-btn-tooltip">
             <IconButton color="primary" size="small" sx={{ textTransform: "none",  marginLeft: 1,
                                                             backgroundColor: !codeViewOpen ? "" : "rgba(2, 136, 209, 0.3)", 

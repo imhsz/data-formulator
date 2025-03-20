@@ -286,7 +286,7 @@ let SingleThreadView: FC<{
 
             if (tableId == leafTable.id && leafTable.anchored && tableIdList.length > 1) {
                 let table = tables.find(t => t.id == tableId);
-                return <Typography sx={{ background: 'transparent', }} >
+                return <Typography key={`table-element-${tableId}-${i}`} sx={{ background: 'transparent', }} >
                     <Box 
                         sx={{ 
                             margin: '0px', 
@@ -353,7 +353,7 @@ let SingleThreadView: FC<{
             // only charts without dependency can be deleted
             let tableDeleteEnabled = !tables.some(t => t.derive?.trigger.tableId == tableId);
 
-            let regularTableBox = <Box ref={relevantCharts.some(c => c.chartId == focusedChartId) ? scrollRef : null} 
+            let regularTableBox = <Box key={`regular-table-box-${tableId}-${i}`} ref={relevantCharts.some(c => c.chartId == focusedChartId) ? scrollRef : null} 
                 sx={{ padding: '0px' }}>
                 <Card className={`data-thread-card ${selectedClassName}`} variant="outlined"
                     sx={{ width: '100%', background: 'aliceblue',
@@ -394,32 +394,14 @@ let SingleThreadView: FC<{
                             }}>
                                 <Tooltip title={table?.anchored ? "unanchor table" : "anchor table"}>
                                     <span>  {/* Wrapper span needed for disabled IconButton tooltip */}
-                                        <IconButton color="primary" sx={{
-                                            minWidth: 0, 
-                                            padding: 0.25,
-                                            '&:hover': {
-                                                transform: 'scale(1.1)',
-                                                transition: 'all 0.2s ease',
-                                            },
-                                            '&.Mui-disabled': {
-                                                color: 'rgba(0, 0, 0, 0.5)'
-                                            }
-                                        }} 
-                                        size="small" 
-                                        disabled={table?.derive == undefined || tables.some(t => t.derive?.trigger.tableId == tableId)}
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            dispatch(dfActions.updateTableAnchored({tableId: tableId, anchored: !table?.anchored}));
-                                        }}>
-                                            {table?.anchored ? 
-                                                <AnchorIcon sx={{ 
-                                                    fontSize: tableId === focusedTableId ? 20 : 16,
-                                                    color: tableId === focusedTableId ? theme.palette.primary.main : 'rgba(0,0,0,0.5)',
-                                                    fontWeight: tableId === focusedTableId ? 'bold' : 'normal',
-                                                }} /> : 
-                                                <TableRowsIcon sx={{ fontSize: 16 }} />
-                                            }
-                                        </IconButton>
+                                        {table?.anchored ? 
+                                            <AnchorIcon sx={{ 
+                                                fontSize: tableId === focusedTableId ? 20 : 16,
+                                                color: tableId === focusedTableId ? theme.palette.primary.main : 'rgba(0,0,0,0.5)',
+                                                fontWeight: tableId === focusedTableId ? 'bold' : 'normal',
+                                            }} /> : 
+                                            <TableRowsIcon sx={{ fontSize: 16 }} />
+                                        }
                                     </span>
                                 </Tooltip>
                             </IconButton>
@@ -439,27 +421,35 @@ let SingleThreadView: FC<{
                         </Stack>
                         <ButtonGroup aria-label="Basic button group" variant="text" sx={{ textAlign: 'end', margin: "auto 2px auto auto" }}>
                             {tableDeleteEnabled && <Tooltip title="delete table">
-                                <IconButton aria-label="share" size="small" sx={{ padding: 0.25, '&:hover': {
-                                    transform: 'scale(1.2)',
-                                    transition: 'all 0.2s ease'
-                                } }}>
-                                    <DeleteIcon fontSize="small" sx={{ fontSize: 18 }} color='warning'
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            dispatch(dfActions.deleteTable(tableId));
-                                        }} />
+                                <IconButton 
+                                    aria-label="share" 
+                                    size="small" 
+                                    sx={{ padding: 0.25, '&:hover': {
+                                        transform: 'scale(1.2)',
+                                        transition: 'all 0.2s ease'
+                                    } }}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        dispatch(dfActions.deleteTable(tableId));
+                                    }}
+                                >
+                                    <DeleteIcon fontSize="small" sx={{ fontSize: 18 }} color='warning' />
                                 </IconButton>
                             </Tooltip>}
                             <Tooltip title="create a new chart">
-                                <IconButton aria-label="share" size="small" sx={{ padding: 0.25, '&:hover': {
-                                    transform: 'scale(1.2)',
-                                    transition: 'all 0.2s ease'
-                                } }}>
-                                    <AddchartIcon fontSize="small" sx={{ fontSize: 18 }} color='primary'
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            dispatch(dfActions.createNewChart({ tableId: tableId }));
-                                        }} />
+                                <IconButton 
+                                    aria-label="share" 
+                                    size="small" 
+                                    sx={{ padding: 0.25, '&:hover': {
+                                        transform: 'scale(1.2)',
+                                        transition: 'all 0.2s ease'
+                                    } }}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        dispatch(dfActions.createNewChart({ tableId: tableId }));
+                                    }}
+                                >
+                                    <AddchartIcon fontSize="small" sx={{ fontSize: 18 }} color='primary' />
                                 </IconButton>
                             </Tooltip>
                         </ButtonGroup>
@@ -660,7 +650,7 @@ export const DataThread: FC<{}> = function ({ }) {
                     </Box>
                     <Box className='data-thread-chart-card-action-button'
                         sx={{ zIndex: 10, color: 'blue', position: "absolute", right: 1, background: 'rgba(255, 255, 255, 0.95)' }}>
-                        <Tooltip title="delete chart">
+                        <Tooltip title="删除图表">
                             <IconButton size="small" color="warning" onClick={(event) => {
                                 event.stopPropagation();
                                 dispatch(dfActions.deleteChartById(chart.id));

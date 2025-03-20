@@ -136,19 +136,19 @@ Totals (7 entries)	5	5	5	15
             </Typography>
             
             <Typography variant="h4">
-                Load data from
-                <TableSelectionDialog  buttonElement={"Examples"} />, <TableUploadDialog buttonElement={"file"} disabled={false} />, or <TableCopyDialogV2 buttonElement={"clipboard"} disabled={false} /> 
+                从以下来源加载数据：
+                <TableSelectionDialog  buttonElement={"示例"} />, <TableUploadDialog buttonElement={"文件"} disabled={false} />, 或 <TableCopyDialogV2 buttonElement={"剪贴板"} disabled={false} /> 
             </Typography>
             <Typography sx={{  width: 960, margin: "auto" }} variant="body1">
-                Besides formatted data (csv, tsv or json), you can copy-paste&nbsp;
-                <Tooltip title={<Box>Example of a messy text block: <Typography sx={{fontSize: 10, marginTop: '6px'}} component={"pre"}>{exampleMessyText}</Typography></Box>}><Typography color="secondary" display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>a text block</Typography></Tooltip> or&nbsp;
-                <Tooltip title={<Box>Example of a table in image format: <Box component="img" sx={{ width: '100%',  marginTop: '6px' }} alt="" src={exampleImageTable} /></Box>}><Typography color="secondary"  display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>an image</Typography></Tooltip> that contain data into clipboard to get started.
+                除了格式化数据（csv, tsv 或 json），您还可以复制粘贴&nbsp;
+                <Tooltip title={<Box>文本块示例: <Typography sx={{fontSize: 10, marginTop: '6px'}} component={"pre"}>{exampleMessyText}</Typography></Box>}><Typography color="secondary" display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>文本块</Typography></Tooltip> 或&nbsp;
+                <Tooltip title={<Box>图像格式的表格示例: <Box component="img" sx={{ width: '100%',  marginTop: '6px' }} alt="" src={exampleImageTable} /></Box>}><Typography color="secondary"  display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>图像</Typography></Tooltip> 中包含的数据到剪贴板开始使用。
             </Typography>
         </Box>
         <Button size="small" color="inherit" 
                 sx={{position: "absolute", color:'darkgray', bottom: 0, right: 0, textTransform: 'none'}} 
                 target="_blank" rel="noopener noreferrer" 
-                href="https://privacy.microsoft.com/en-US/data-privacy-notice">view data privacy notice</Button>
+                href="https://privacy.microsoft.com/en-US/data-privacy-notice">查看数据隐私声明</Button>
     </Box>;
 
     let modelSelectionDialogBox = <Box sx={{width: '100vw'}}>
@@ -158,14 +158,14 @@ Totals (7 entries)	5	5	5	15
                 {toolName}
             </Typography>
             <Typography variant="h4">
-                Let's <ModelSelectionButton />
+                让我们 <ModelSelectionButton />
             </Typography>
-            <Typography variant="body1">Specify an OpenAI or Azure OpenAI endpoint to run {toolName}.</Typography>
+            <Typography variant="body1">指定 OpenAI 或 Azure OpenAI 端点以运行 {toolName}。</Typography>
         </Box>
         <Button size="small" color="inherit" 
                 sx={{position: "absolute", color:'darkgray', bottom: 0, right: 0, textTransform: 'none'}} 
                 target="_blank" rel="noopener noreferrer" 
-                href="https://privacy.microsoft.com/en-US/data-privacy-notice">view data privacy notice</Button>
+                href="https://privacy.microsoft.com/en-US/data-privacy-notice">查看数据隐私声明</Button>
     </Box>;
 
 

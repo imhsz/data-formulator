@@ -46,7 +46,14 @@ APP_ROOT = Path(os.path.join(Path(__file__).parent)).absolute()
 import os
 
 app = Flask(__name__, static_url_path='', static_folder=os.path.join(APP_ROOT, "dist"))
-CORS(app)
+CORS(app, resources={r"/*": {
+    "origins": "*",
+    "methods": ["GET", "POST", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+    "expose_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True,
+    "max_age": 3600
+}})
 
 print(APP_ROOT)
 
@@ -203,8 +210,12 @@ def check_available_models():
                     results.append(model_config)
             except Exception as e:
                 print(f"Error testing {provider} model {model}: {e}")
-                
-    return json.dumps(results)
+    
+    response = flask.Response(json.dumps(results))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
 @app.route('/test-model', methods=['GET', 'POST'])
 def test_model():
@@ -249,16 +260,44 @@ def test_model():
     
     return json.dumps(result)
 
-@app.route("/", defaults={"path": ""})
-def index_alt(path):
-    logger.info(app.static_folder)
-    return send_from_directory(app.static_folder, "index.html")
-
-@app.errorhandler(404)
-def page_not_found(e):
-    # your processing here
-    logger.info(app.static_folder)
-    return send_from_directory(app.static_folder, "index.html") #'Hello 404!' #send_from_directory(app.static_folder, "index.html")
+@app.route('/', defaults={'path': ''}, methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/<path:path>', methods=['GET', 'POST', 'OPTIONS'])
+def catch_all(path):
+    if request.method == 'OPTIONS':
+        # 处理OPTIONS预检请求
+        response = flask.Response()
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '3600')
+        return response
+    
+    # 对于GET/POST请求，尝试返回静态文件
+    if path == '':
+        logger.info(app.static_folder)
+        response = send_from_directory(app.static_folder, "index.html")
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '3600')
+        return response
+    
+    # 尝试返回静态资源
+    try:
+        logger.info(f"Trying to serve static file: {path}")
+        return send_from_directory(app.static_folder, path)
+    except:
+        # 如果没有匹配到文件，返回index.html (SPA处理)
+        logger.info(f"File not found, returning index.html for: {path}")
+        response = send_from_directory(app.static_folder, "index.html")
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '3600')
+        return response
 
 ###### test functions ######
 
@@ -540,17 +579,32 @@ def request_code_expl():
         expl = ""
     return expl
 
-@app.route('/app-config', methods=['GET'])
+@app.route('/app-config', methods=['GET', 'OPTIONS'])
 def get_app_config():
     """Provide frontend configuration settings from environment variables"""
+    if request.method == 'OPTIONS':
+        response = flask.Response()
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '3600')
+        return response
+        
     config = {
         "SHOW_KEYS_ENABLED": os.getenv("SHOW_KEYS_ENABLED", "true").lower() == "true"
     }
-    return flask.jsonify(config)
+    response = flask.jsonify(config)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Max-Age', '3600')
+    return response
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Data Formulator")
-    parser.add_argument("-p", "--port", type=int, default=5000, help="The port number you want to use")
+    parser.add_argument("-p", "--port", type=int, default=5656, help="The port number you want to use")
     return parser.parse_args()
 
 

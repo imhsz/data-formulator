@@ -116,7 +116,9 @@ export const TriggerCard: FC<{className?: string, trigger: Trigger, hideFields?:
             })
             .map(([channel, encoding], index) => {
                 let field = fieldItems.find(f => f.id == encoding.fieldID) as FieldItem;
-                return [index > 0 ? '⨉' : '', 
+                return [index > 0 ? 
+                        <span key={`trigger-separator-${channel}-${index}`}>⨉</span> : 
+                        <span key={`trigger-empty-${channel}-${index}`}></span>, 
                         <Chip 
                             key={`trigger-${channel}-${field?.id}`}
                             sx={{color:'inherit', maxWidth: '110px', marginLeft: "2px", height: 18, fontSize: 12, borderRadius: '4px', 
@@ -176,7 +178,9 @@ export const MiniTriggerCard: FC<{className?: string, trigger: Trigger, hideFiel
             })
             .map(([channel, encoding], index) => {
                 let field = fieldItems.find(f => f.id == encoding.fieldID) as FieldItem;
-                return [index > 0 ? '⨉' : '', 
+                return [index > 0 ? 
+                        <span key={`mini-trigger-separator-${channel}-${index}`}>⨉</span> : 
+                        <span key={`mini-trigger-empty-${channel}-${index}`}></span>, 
                         <Chip 
                             key={`trigger-${channel}-${field.id}`}
                             sx={{color:'inherit', maxWidth: '110px', marginLeft: "2px", height: 16, fontSize: 'inherit', borderRadius: '4px', 
@@ -345,8 +349,8 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
         .filter(([group, channelList]) => channelList.some(ch => Object.keys(encodingMap).includes(ch)))
         .map(([group, channelList]) => {
 
-            let component = <Box>
-                <Typography key={`encoding-group-${group}`} sx={{ fontSize: 10, color: "text.secondary", marginTop: "6px", marginBottom: "2px" }}>{group}</Typography>
+            let component = <Box key={`encoding-group-box-${group}`}>
+                <Typography sx={{ fontSize: 10, color: "text.secondary", marginTop: "6px", marginBottom: "2px" }}>{group}</Typography>
                 {channelList.filter(channel => Object.keys(encodingMap).includes(channel))
                     .map(channel => <EncodingBox key={`shelf-${channel}`} channel={channel as Channel} chartId={chartId} />)}
             </Box>
