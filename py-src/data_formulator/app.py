@@ -603,7 +603,7 @@ def get_app_config():
     return response
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Data Formulator")
+    parser = argparse.ArgumentParser(description="AI图表")
     parser.add_argument("-p", "--port", type=int, default=5656, help="The port number you want to use")
     return parser.parse_args()
 

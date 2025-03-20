@@ -165,7 +165,7 @@ export const ExportStateButton: React.FC<{}> = ({ }) => {
 
 //type AppProps = ConnectedProps<typeof connector>;
 
-export const toolName = "Data Formulator"
+export const toolName = "AI图表"
 
 export interface AppFCProps {
 }
@@ -317,7 +317,7 @@ const ConfigDialog: React.FC = () => {
                 </Box>
             </Button>
             <Dialog onClose={() => setOpen(false)} open={open}>
-                <DialogTitle>Data Formulator Configuration</DialogTitle>
+                <DialogTitle>AI图表 Configuration</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <Box sx={{ 

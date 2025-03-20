@@ -9,6 +9,24 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 8018,
+    strictPort: true,
+    open: true,
+    cors: true,
+    hmr: {
+      host: 'localhost',
+    },
+    allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5656',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
   build: {
     outDir: path.join(__dirname, 'py-src', 'data_formulator', "dist"),
     rollupOptions: {
