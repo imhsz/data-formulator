@@ -26,6 +26,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CancelIcon from '@mui/icons-material/Cancel';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import ReactDiffViewer from 'react-diff-viewer'
 
@@ -170,26 +171,48 @@ export const TableSelectionDialog: React.FC<{ buttonElement: any }> = function T
 
     const [datasetPreviews, setDatasetPreviews] = React.useState<TableChallenges[]>([]);
     const [tableDialogOpen, setTableDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [retryCount, setRetryCount] = useState<number>(0);
+    const maxRetries = 3;
+
+    const loadDatasets = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${getUrls().VEGA_DATASET_LIST}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            let tableChallenges: TableChallenges[] = result.map((info: any) => {
+                let table = createTableFromFromObjectArray(info["name"], JSON.parse(info["snapshot"]), true)
+                return {table: table, challenges: info["challenges"], name: info["name"]}
+            }).filter((t: TableChallenges | undefined) => t != undefined);
+            setDatasetPreviews(tableChallenges);
+        } catch (err) {
+            console.error('Error loading datasets:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load datasets');
+            if (retryCount < maxRetries) {
+                setRetryCount(prev => prev + 1);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     React.useEffect(() => {
-        // Show a loading animation/message while loading
-        fetch(`${getUrls().VEGA_DATASET_LIST}`)
-            .then((response) => response.json())
-            .then((result) => {
-                let tableChallenges : TableChallenges[] = result.map((info: any) => {
-                    let table = createTableFromFromObjectArray(info["name"], JSON.parse(info["snapshot"]), true)
-                    return {table: table, challenges: info["challenges"], name: info["name"]}
-                }).filter((t : TableChallenges | undefined) => t != undefined);
-                setDatasetPreviews(tableChallenges);
-            });
-      // No variable dependencies means this would run only once after the first render
-      }, []);
+        if (tableDialogOpen) {
+            loadDatasets();
+        }
+    }, [tableDialogOpen, retryCount]);
 
     let dispatch = useDispatch<AppDispatch>();
 
     return <>
         <Button sx={{fontSize: "inherit"}} onClick={() => {
             setTableDialogOpen(true);
+            setRetryCount(0);
         }}>
             {buttonElement}
         </Button>
@@ -210,40 +233,73 @@ export const TableSelectionDialog: React.FC<{ buttonElement: any }> = function T
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{overflowX: "hidden", padding: 0}} dividers>
-                    <TableSelectionView tableChallenges={datasetPreviews} hideRowNum
-                        handleDeleteTable={undefined}
-                        handleSelectTable={(tableChallenges) => {
-                            // request public datasets from the server
-                        console.log(tableChallenges);
-                        console.log(`${getUrls().VEGA_DATASET_REQUEST_PREFIX}${tableChallenges.table.id}`)
-                        fetch(`${getUrls().VEGA_DATASET_REQUEST_PREFIX}${tableChallenges.table.id}`)
-                            .then((response) => {
-                                return response.text()
-                            })
-                            .then((text) => {         
-                                let fullTable = createTableFromFromObjectArray(tableChallenges.table.id, JSON.parse(text), true);
-                                if (fullTable) {
-                                    dispatch(dfActions.loadTable(fullTable));
-                                    dispatch(fetchFieldSemanticType(fullTable));
-                                    dispatch(dfActions.addChallenges({
-                                        tableId: tableChallenges.table.id,
-                                        challenges: tableChallenges.challenges
-                                    }));
-                                } else {
-                                    throw "";
-                                }
-                                setTableDialogOpen(false); 
-                            })
-                            .catch((error) => {
-                                console.log(error)
-                                dispatch(dfActions.addMessages({
-                                    "timestamp": Date.now(),
-                                    "type": "error",
-                                    "value": `Unable to load the sample dataset ${tableChallenges.table.id}, please try again later or upload your data.`
-                                }));
-                            })
-                        }}/>
-                </ DialogContent>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                            <CircularProgress />
+                            <Typography sx={{ mt: 2 }}>Loading sample datasets...</Typography>
+                        </Box>
+                    ) : error ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                            <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+                            {retryCount < maxRetries ? (
+                                <Button 
+                                    variant="contained" 
+                                    onClick={() => loadDatasets()}
+                                    startIcon={<RefreshIcon />}
+                                >
+                                    Retry
+                                </Button>
+                            ) : (
+                                <Typography color="error">Maximum retries reached. Please try again later.</Typography>
+                            )}
+                        </Box>
+                    ) : datasetPreviews.length === 0 ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                            <Typography>No sample datasets available.</Typography>
+                        </Box>
+                    ) : (
+                        <TableSelectionView tableChallenges={datasetPreviews} hideRowNum
+                            handleDeleteTable={undefined}
+                            handleSelectTable={(tableChallenges) => {
+                                setIsLoading(true);
+                                // request public datasets from the server
+                                console.log(tableChallenges);
+                                console.log(`${getUrls().VEGA_DATASET_REQUEST_PREFIX}${tableChallenges.table.id}`)
+                                fetch(`${getUrls().VEGA_DATASET_REQUEST_PREFIX}${tableChallenges.table.id}`)
+                                    .then((response) => {
+                                        if (!response.ok) {
+                                            throw new Error(`HTTP error! status: ${response.status}`);
+                                        }
+                                        return response.text()
+                                    })
+                                    .then((text) => {         
+                                        let fullTable = createTableFromFromObjectArray(tableChallenges.table.id, JSON.parse(text), true);
+                                        if (fullTable) {
+                                            dispatch(dfActions.loadTable(fullTable));
+                                            dispatch(fetchFieldSemanticType(fullTable));
+                                            dispatch(dfActions.addChallenges({
+                                                tableId: tableChallenges.table.id,
+                                                challenges: tableChallenges.challenges
+                                            }));
+                                        } else {
+                                            throw new Error("Failed to create table from data");
+                                        }
+                                        setTableDialogOpen(false); 
+                                    })
+                                    .catch((error) => {
+                                        console.error('Error loading dataset:', error);
+                                        dispatch(dfActions.addMessages({
+                                            "timestamp": Date.now(),
+                                            "type": "error",
+                                            "value": `Unable to load the sample dataset ${tableChallenges.table.id}, please try again later or upload your data.`
+                                        }));
+                                    })
+                                    .finally(() => {
+                                        setIsLoading(false);
+                                    });
+                            }}/>
+                    )}
+                </DialogContent>
             </Dialog>
     </>
 }

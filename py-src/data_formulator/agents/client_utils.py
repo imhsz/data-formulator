@@ -54,6 +54,11 @@ class Client(object):
                 self.model = model
             else:
                 self.model = f"ollama/{model}"
+            # 为Ollama添加消息格式转换
+            self.params["model_kwargs"] = {
+                "format": "json",
+                "messages": True
+            }
 
     def get_completion(self, messages):
         """

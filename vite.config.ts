@@ -9,6 +9,24 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 8018,
+    allowedHosts: [
+      'ai.liuyunxx.com',
+      'localhost',
+      '127.0.0.1'
+    ],
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:5656',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        secure: false,
+        ws: true
+      }
+    }
+  },
   build: {
     outDir: path.join(__dirname, 'py-src', 'data_formulator', "dist"),
     rollupOptions: {
