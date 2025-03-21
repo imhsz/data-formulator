@@ -699,22 +699,36 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
         />
         {chart.intermediate ? 
             <Box sx={{display: 'flex'}}>
-                <Tooltip title={<Typography sx={{fontSize: 11}}>formulate and override <TableRowsIcon sx={{fontSize: 10, marginBottom: '-1px'}}/>{chart.intermediate.resultTableId}</Typography>}>
+                {createDisabled ? (
                     <IconButton sx={{ marginLeft: "0"}} size="small"
-                        disabled={createDisabled} color={"warning"} onClick={() => { 
-                            deriveNewData(chart.intermediate?.resultTableId); 
-                        }}>
+                        disabled={true} color={"warning"}>
                         <ChangeCircleOutlinedIcon fontSize="small" />
                     </IconButton>
-                </Tooltip>
+                ) : (
+                    <Tooltip title={<Typography sx={{fontSize: 11}}>formulate and override <TableRowsIcon sx={{fontSize: 10, marginBottom: '-1px'}}/>{chart.intermediate.resultTableId}</Typography>}>
+                        <IconButton sx={{ marginLeft: "0"}} size="small"
+                            color={"warning"} onClick={() => { 
+                                deriveNewData(chart.intermediate?.resultTableId); 
+                            }}>
+                            <ChangeCircleOutlinedIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </Box>
          : 
-             <Tooltip title={`Formulate`}>
+            (createDisabled ? (
                 <IconButton sx={{ marginLeft: "0"}} 
-                disabled={createDisabled} color={"primary"} onClick={() => { deriveNewData(); }}>
+                    disabled={true} color={"primary"}>
                     <PrecisionManufacturing />
                 </IconButton>
-            </Tooltip>
+            ) : (
+                <Tooltip title={`Formulate`}>
+                    <IconButton sx={{ marginLeft: "0"}} 
+                        color={"primary"} onClick={() => { deriveNewData(); }}>
+                        <PrecisionManufacturing />
+                    </IconButton>
+                </Tooltip>
+            ))
         }
     </Box>
 

@@ -382,25 +382,28 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
                     // });
                     dispatch(dfActions.saveUnsaveChart(focusedChart.id));
                 }}>
-                    <StarBorderIcon  />
-                </IconButton>
-            </Tooltip>
-        );
+                <StarBorderIcon />
+            </IconButton>
+        </Tooltip>;
 
     let duplicateButton = <Tooltip title="duplicate the chart" key="duplicate-btn-tooltip">
         <IconButton color="primary" key="duplicate-btn" size="small" sx={{ textTransform: "none" }}
-        disabled={focusedChart.intermediate != undefined}
-        onClick={() => {
-            // trackEvent('save-chart', { 
-            //     vlspec: focusedChartVgSpec,
-            //     data_sample: focusedExtTable.slice(0, 100)
-            // });
-            dispatch(dfActions.duplicateChart(focusedChart.id));
-        }}>
-        
-            <ContentCopyIcon  />
+            disabled={true}>
+            <ContentCopyIcon />
         </IconButton>
-    </Tooltip>
+        : 
+        <Tooltip title="复制图表" key="duplicate-btn-tooltip">
+            <IconButton color="primary" key="duplicate-btn" size="small" sx={{ textTransform: "none" }}
+                onClick={() => {
+                    // trackEvent('save-chart', { 
+                    //     vlspec: focusedChartVgSpec,
+                    //     data_sample: focusedExtTable.slice(0, 100)
+                    // });
+                    dispatch(dfActions.duplicateChart(focusedChart.id));
+                }}>
+                <ContentCopyIcon />
+            </IconButton>
+        </Tooltip>
 
     let createNewChartButton =  <BaseChartCreationMenu tableId={focusedChart.tableRef} buttonElement={
             <Tooltip title="create a new chart" key="create-new-chart-btn-tooltip">
@@ -408,14 +411,17 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
             </Tooltip>} />
 
 
-    let deleteButton = (
+    let deleteButton = focusedChart.intermediate != undefined ?
+        <IconButton color="warning" size="small" sx={{ textTransform: "none" }} disabled={true}>
+            <DeleteIcon />
+        </IconButton>
+        :
         <Tooltip title="删除" key="delete-btn-tooltip">
-            <IconButton color="warning" size="small" sx={{ textTransform: "none" }}  disabled={focusedChart.intermediate != undefined}
-                        onClick={() => { handleDeleteChart() }}>
+            <IconButton color="warning" size="small" sx={{ textTransform: "none" }}
+                onClick={() => { handleDeleteChart() }}>
                 <DeleteIcon />
             </IconButton>
         </Tooltip>
-    );
 
     let transformCode = "";
     if (table.derive?.code) {
@@ -449,7 +455,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
                     handleCloseDialog={() => { setChatDialogOpen(false) }}
                     code={transformCode}
                     dialog={resultTable?.derive?.dialog || table.derive?.dialog as any[]} />
-    ] : [];
+    ]
     
     let chartActionButtons = [
         <Box key="data-source" fontSize="small" sx={{ margin: "auto", display: "flex", flexDirection: "row"}}>
@@ -639,7 +645,7 @@ export const ChartEditorFC: FC<{  cachedCandidates: DictTable[],
             collapsedSize={48} in={!collapseEditor} orientation='horizontal' 
             sx={{position: 'relative'}}>
             <Box sx={{display: 'flex', flexDirection: 'row', height: '100%'}}>
-                <Tooltip placement="left" title={collapseEditor ? "open editor" : "hide editor"}>
+                <Tooltip placement="left" title={collapseEditor ? "open editor" : "hide editor"} key="editor-collapse-tooltip">
                     <Button color="primary"
                             sx={{width: 24, minWidth: 24}}
                         onClick={()=>{setCollapseEditor(!collapseEditor)}}

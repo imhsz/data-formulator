@@ -139,6 +139,19 @@ function getComparator<Key extends keyof any>(
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+// 添加这个自定义的forwardRef包装组件
+const ForwardRefTableHead = React.forwardRef<HTMLTableSectionElement, React.ComponentPropsWithRef<typeof TableHead>>(
+    (props, ref) => <TableHead {...props} ref={ref} className={`table-header-container ${props.className || ''}`} />
+);
+
+// 添加TableRow的forwardRef包装
+const ForwardRefTableRow = React.forwardRef<HTMLTableRowElement, React.ComponentPropsWithRef<typeof TableRow> & {'data-index'?: number}>(
+    (props, ref) => {
+        const index = props['data-index'];
+        return <TableRow {...props} ref={ref} style={{backgroundColor: index % 2 == 0 ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.02)"}} />;
+    }
+);
+
 export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, tableName, columnDefs, $tableRef, onSelectionFinished }) => {
 
     const [footerActionExpand, setFooterActionExpand] = React.useState<boolean>(false);
@@ -187,12 +200,8 @@ export const SelectableDataGrid: React.FC<SelectableDataGridProps> = ({ rows, ta
     const TableComponents = {
         Scroller: TableContainer,
         Table: Table,
-        TableHead: (props: any) => <TableHead {...props} className='table-header-container' />,
-        TableRow: (props: any) => {
-            const index = props['data-index'];
-            return <TableRow {...props} style={{backgroundColor: index % 2 == 0 ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.02)"}}/>
-        }, //
-        //TableRow: TableRow,
+        TableHead: ForwardRefTableHead, // 使用新的组件替代原来的TableHead
+        TableRow: ForwardRefTableRow, // 使用新的TableRow包装组件
         TableBody: TableBody,
     }
 

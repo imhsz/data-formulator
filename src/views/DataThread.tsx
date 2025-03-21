@@ -651,10 +651,16 @@ export const DataThread: FC<{}> = function ({ }) {
                     <Box className='data-thread-chart-card-action-button'
                         sx={{ zIndex: 10, color: 'blue', position: "absolute", right: 1, background: 'rgba(255, 255, 255, 0.95)' }}>
                         <Tooltip title="删除图表">
-                            <IconButton size="small" color="warning" onClick={(event) => {
-                                event.stopPropagation();
-                                dispatch(dfActions.deleteChartById(chart.id));
-                            }}><DeleteIcon fontSize="small" /></IconButton>
+                            <IconButton 
+                                size="small" 
+                                color="warning" 
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    dispatch(dfActions.deleteChartById(chart.id));
+                                }}
+                            >
+                                <DeleteIcon fontSize="small" />
+                            </IconButton>
                         </Tooltip>
                     </Box>
                 </Box>
@@ -850,11 +856,17 @@ export const DataThread: FC<{}> = function ({ }) {
                     {jumpButtons}
                 </Box>
                 
-                <Tooltip title={drawerOpen ? "collapse" : "expand"}>
-                    <IconButton size={'small'} color="primary" disabled={leafTables.length <= 1} onClick={() => { setThreadDrawerOpen(!threadDrawerOpen); }}>
+                {leafTables.length <= 1 ? (
+                    <IconButton size={'small'} color="primary" disabled={true}>
                         {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
-                </Tooltip>
+                ) : (
+                    <Tooltip title={drawerOpen ? "collapse" : "expand"}>
+                        <IconButton size={'small'} color="primary" onClick={() => { setThreadDrawerOpen(!threadDrawerOpen); }}>
+                            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                        </IconButton>
+                    </Tooltip>
+                )}
             </Box>
             <Box sx={{
                 transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms', overflowY: 'auto',

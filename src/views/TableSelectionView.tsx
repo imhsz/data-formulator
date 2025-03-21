@@ -170,17 +170,41 @@ export const TableSelectionDialog: React.FC<{ buttonElement: any }> = function T
 
     const [datasetPreviews, setDatasetPreviews] = React.useState<TableChallenges[]>([]);
     const [tableDialogOpen, setTableDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [loadError, setLoadError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
+        setIsLoading(true);
+        setLoadError(null);
         // Show a loading animation/message while loading
-        fetch(`${getUrls().VEGA_DATASET_LIST}`)
-            .then((response) => response.json())
+        const fetchUrl = getUrls().VEGA_DATASET_LIST;
+        console.log("Fetching example datasets old udl:", fetchUrl);
+        console.log("Fetching example datasets from:", fetchUrl);
+        console.log("开始加载示例数据集...");
+        fetch(fetchUrl)
+            .then((response) => {
+                console.log("API Response status:", response.status, response.statusText);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then((result) => {
                 let tableChallenges : TableChallenges[] = result.map((info: any) => {
                     let table = createTableFromFromObjectArray(info["name"], JSON.parse(info["snapshot"]), true)
                     return {table: table, challenges: info["challenges"], name: info["name"]}
                 }).filter((t : TableChallenges | undefined) => t != undefined);
+                
+                console.log("Processed datasets:", tableChallenges.length);
+                console.log("处理后的数据集:", tableChallenges);
                 setDatasetPreviews(tableChallenges);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error("Failed to fetch example datasets:", error);
+                console.error("错误详情:", error.message, error.stack);
+                setLoadError(error.message);
+                setIsLoading(false);
             });
       // No variable dependencies means this would run only once after the first render
       }, []);

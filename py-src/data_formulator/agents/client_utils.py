@@ -79,6 +79,35 @@ class Client(object):
                 completion_params["max_tokens"] = self.params["max_completion_tokens"]
                 
             return client.chat.completions.create(**completion_params)
+        elif self.endpoint == "ollama":
+            # 为Ollama特别处理消息格式
+            # 查找系统消息和用户消息
+            system_content = ""
+            user_messages = []
+            
+            for msg in messages:
+                if msg["role"] == "system":
+                    system_content = msg["content"]
+                else:
+                    user_messages.append(msg)
+            
+            # 如果有系统消息，将其与第一个用户消息合并
+            if system_content and len(user_messages) > 0:
+                combined_messages = user_messages.copy()
+                combined_messages[0]["content"] = f"{system_content}\n\n{combined_messages[0]['content']}"
+                return litellm.completion(
+                    model=self.model,
+                    messages=combined_messages,
+                    drop_params=True,
+                    **self.params
+                )
+            
+            return litellm.completion(
+                model=self.model,
+                messages=user_messages if user_messages else messages,
+                drop_params=True,
+                **self.params
+            )
         else:
             return litellm.completion(
                 model=self.model,

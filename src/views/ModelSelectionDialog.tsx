@@ -322,36 +322,43 @@ export const ModelSelectionButton: React.FC<{}> = ({ }) => {
             />
         </TableCell>
         <TableCell align="right">
-            <Tooltip title={modelExists ? "提供商+模型已存在" : "添加并测试模型"}>
+            {!readyToTest ? (
                 <IconButton color={modelExists ? 'error' : 'primary'}
-                    disabled={!readyToTest}
-                    sx={{cursor: modelExists ? 'help' : 'pointer'}}
-                    onClick={(event) => {
-                        event.stopPropagation()
-
-                        console.log("checkpont 1")
-
-                        let endpoint = newEndpoint;
-
-                        let id = `${endpoint}-${newModel}-${newApiKey}-${newApiBase}-${newApiVersion}`;
-
-                        let model = {endpoint, model: newModel, api_key: newApiKey, api_base: newApiBase, api_version: newApiVersion, id: id};
-
-                        dispatch(dfActions.addModel(model));
-                        dispatch(dfActions.selectModel(id));
-                        setTempSelectedModelId(id);
-
-                        testModel(model); 
-                        
-                        setNewEndpoint("");
-                        setNewModel("");
-                        setNewApiKey(undefined);
-                        setNewApiBase(undefined);
-                        setNewApiVersion(undefined);
-                    }}>
+                    disabled={true}
+                    sx={{cursor: modelExists ? 'help' : 'pointer'}}>
                     <AddCircleIcon />
                 </IconButton>
-            </Tooltip>
+            ) : (
+                <Tooltip title={modelExists ? "提供商+模型已存在" : "添加并测试模型"}>
+                    <IconButton color={modelExists ? 'error' : 'primary'}
+                        sx={{cursor: modelExists ? 'help' : 'pointer'}}
+                        onClick={(event) => {
+                            event.stopPropagation()
+
+                            console.log("checkpont 1")
+
+                            let endpoint = newEndpoint;
+
+                            let id = `${endpoint}-${newModel}-${newApiKey}-${newApiBase}-${newApiVersion}`;
+
+                            let model = {endpoint, model: newModel, api_key: newApiKey, api_base: newApiBase, api_version: newApiVersion, id: id};
+
+                            dispatch(dfActions.addModel(model));
+                            dispatch(dfActions.selectModel(id));
+                            setTempSelectedModelId(id);
+
+                            testModel(model); 
+                            
+                            setNewEndpoint("");
+                            setNewModel("");
+                            setNewApiKey(undefined);
+                            setNewApiBase(undefined);
+                            setNewApiVersion(undefined);
+                        }}>
+                        <AddCircleIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
         </TableCell>
         <TableCell align="right">
             <Tooltip title={"清除"}>
@@ -388,14 +395,18 @@ export const ModelSelectionButton: React.FC<{}> = ({ }) => {
             <TableBody>
                 {models.map((model) => {
                     let isItemSelected = tempSelectedModelId != undefined && tempSelectedModelId == model.id;
-                    let status =  getStatus(model.id);  
+                    let status = getStatus(model.id);
                     
-                    let statusIcon = status  == "unknown" ? <HelpOutlineIcon color="warning" /> : ( status == 'testing' ? <CircularProgress size={24} />:
-                            (status == "ok" ? <CheckCircleOutlineIcon color="success"/> : <ErrorOutlineIcon color="error"/> ))
+                    // model status
+                    let message = "测试模型";
+                    let statusIcon = <><CircularProgress size="1rem"/></>;
+                    let borderStyle = "1px solid #eeeeee";
                     
-                    let message = "模型可以使用";
-                    if (status == "unknown") {
-                        message = "应用前请点击状态图标进行测试。";
+                    if (status == "ok") {
+                        message = "模型可使用 ✓";
+                        statusIcon = <CheckCircleOutlineIcon color="success"/>;
+                    } else if (status == "testing") {
+                        message = "测试中...";
                     } else if (status == "error") {
                         message = testedModels.find(t => t.id == model.id)?.message || "未知错误";
                     }
@@ -408,24 +419,28 @@ export const ModelSelectionButton: React.FC<{}> = ({ }) => {
                         <TableRow
                             selected={isItemSelected}
                             onClick={() => { setTempSelectedModelId(model.id) }}
-                            sx={{ cursor: 'pointer'}}
+                            sx={{ 
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                },
+                            }}
                         >
-                            <TableCell align="right" sx={{ borderBottom: noBorderStyle }}>
-                                <Radio checked={isItemSelected} name="radio-buttons" inputProps={{'aria-label': 'Select this model'}} />
+                            <TableCell padding="checkbox" sx={{ borderBottom: borderStyle }}>
+                                <Radio
+                                    color="primary"
+                                    checked={isItemSelected}
+                                    inputProps={{
+                                        'aria-labelledby': `checkbox-${model.id}`,
+                                    }}
+                                />
                             </TableCell>
-                            <TableCell align="left" sx={{ borderBottom: noBorderStyle }}>
+                            <TableCell align="left" sx={{ borderBottom: borderStyle }}>
                                 {model.endpoint}
                             </TableCell>
-                            <TableCell component="th" scope="row" sx={{ borderBottom: borderStyle }}>
-                                {model.api_key  ? (showKeys ? 
-                                    <Typography 
-                                        sx={{ 
-                                            maxWidth: '240px',
-                                            wordBreak: 'break-all',
-                                            whiteSpace: 'normal'
-                                        }} 
-                                        fontSize={10}
-                                    >
+                            <TableCell align="left" sx={{ borderBottom: borderStyle }}>
+                                {model.api_key !== undefined? 
+                                    (showKeys ? <Typography fontSize='inherit'>
                                         {model.api_key}
                                     </Typography> 
                                     : "************")
@@ -472,6 +487,7 @@ export const ModelSelectionButton: React.FC<{}> = ({ }) => {
                         </TableRow>
                         {['error', 'unknown'].includes(status) && (
                             <TableRow 
+                                key={`model-error-row-${model.id}`}
                                 selected={isItemSelected}
                                 onClick={() => { setTempSelectedModelId(model.id) }}
                                 sx={{ 

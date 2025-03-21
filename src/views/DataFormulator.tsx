@@ -141,8 +141,12 @@ Totals (7 entries)	5	5	5	15
             </Typography>
             <Typography sx={{  width: 960, margin: "auto" }} variant="body1">
                 除了格式化数据（csv, tsv 或 json），您还可以复制粘贴&nbsp;
-                <Tooltip title={<Box>文本块示例: <Typography sx={{fontSize: 10, marginTop: '6px'}} component={"pre"}>{exampleMessyText}</Typography></Box>}><Typography color="secondary" display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>文本块</Typography></Tooltip> 或&nbsp;
-                <Tooltip title={<Box>图像格式的表格示例: <Box component="img" sx={{ width: '100%',  marginTop: '6px' }} alt="" src={exampleImageTable} /></Box>}><Typography color="secondary"  display="inline" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>图像</Typography></Tooltip> 中包含的数据到剪贴板开始使用。
+                <Tooltip title={<Box>文本块示例: <Typography sx={{fontSize: 10, marginTop: '6px'}} component={"pre"}>{exampleMessyText}</Typography></Box>}>
+                    <Typography color="secondary" display="inline" component="span" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>文本块</Typography>
+                </Tooltip> 或&nbsp;
+                <Tooltip title={<Box>图像格式的表格示例: <Box component="img" sx={{ width: '100%',  marginTop: '6px' }} alt="" src={exampleImageTable} /></Box>}>
+                    <Typography color="secondary" display="inline" component="span" sx={{cursor: 'help', "&:hover": {textDecoration: 'underline'}}}>图像</Typography>
+                </Tooltip> 中包含的数据到剪贴板开始使用。
             </Typography>
         </Box>
         <Button size="small" color="inherit" 

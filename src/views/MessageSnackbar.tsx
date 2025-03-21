@@ -91,16 +91,22 @@ export function MessageSnackbar() {
                     <AssignmentIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip placement="right" title="查看最新消息">
-                <IconButton disabled={messages.length == 0} sx={{position: "absolute", bottom: 16, right: 8}}
-                    onClick={()=>{
-                        setOpen(true);
-                        setMessage(messages[messages.length - 1]);
-                    }}
-                >
+            {messages.length == 0 ? (
+                <IconButton disabled={true} sx={{position: "absolute", bottom: 16, right: 8}}>
                     <InfoIcon />
                 </IconButton>
-            </Tooltip>
+            ) : (
+                <Tooltip placement="right" title="查看最新消息">
+                    <IconButton sx={{position: "absolute", bottom: 16, right: 8}}
+                        onClick={()=>{
+                            setOpen(true);
+                            setMessage(messages[messages.length - 1]);
+                        }}
+                    >
+                        <InfoIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
             {challenge != undefined ? <Snackbar
                 open={openChallenge}
                 anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}

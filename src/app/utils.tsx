@@ -22,10 +22,10 @@ export interface PopupConfig {
 export const appConfig: AppConfig = {
     // 在开发环境中使用相对URL或窗口位置，以支持通过IP或域名访问
     serverUrl: process.env.NODE_ENV === "production" 
-        ? "./" 
+        ? "." 
         : (window.location.protocol === "http:" || window.location.protocol === "https:") 
-            ? `${window.location.protocol}//${window.location.hostname}:5656/`
-            : "http://localhost:5656/",
+            ? `${window.location.protocol}//${window.location.hostname}:5656`
+            : "http://localhost:5656",
 };
 
 export function assignAppConfig(config: AppConfig) {
